@@ -3,33 +3,55 @@ const racers = [
     name: "malfoy",
     raceNumber: "1",
     speed: 13,
-    raceColor: "red",
+    raceColor: "lightblue",
     icon: "./icons8-draco-malfoy-48.png",
   },
   {
     name: "dobby",
     raceNumber: "2",
     speed: 34,
-    raceColor: "green",
+    raceColor: "lightgreen",
     icon: "./icons8-dobby-48.png",
   },
   {
     name: "hermione",
     raceNumber: "3",
     speed: 10,
-    raceColor: "red",
+    raceColor: "pink",
     icon: "./icons8-hermione-48.png",
   },
   {
     name: "dumbledore",
     speed: 20,
     raceNumber: "4",
-    raceColor: "red",
+    raceColor: "gold",
     icon: "./icons8-albus-dumbledore-48.png",
   },
 ];
 
-function buildTheRace(racers) {
+const startButton = document.querySelector("#start-button");
+startButton.addEventListener("click", startRace);
+
+const stopButton = document.querySelector("#stop-button");
+stopButton.addEventListener("click", stopAll);
+
+const resetButton = document.querySelector("#reset-button");
+resetButton.addEventListener("click", reset);
+
+function reset() {
+  stopAll();
+  let clear = document.querySelectorAll("p");
+  clear.forEach((e) => {
+    e.remove();
+  });
+  racers.forEach((element) => {
+    let icon = document.querySelector(`#${element.id}`);
+    icon.style.left = 0;
+    console.log(icon);
+  });
+}
+
+function createRaceDivs() {
   racers.forEach((element) => {
     let newDiv = document.createElement("div");
     newDiv.className = `race${element.raceNumber}`;
@@ -40,7 +62,11 @@ function buildTheRace(racers) {
 
     newDiv.append(createImg(element));
     document.body.appendChild(newDiv);
+  });
+}
 
+function startRace() {
+  racers.forEach((element) => {
     let intervalId = setInterval(() => {
       moveIcon(element);
     }, element.speed);
@@ -65,13 +91,18 @@ function announceWinner(winner) {
   document.body.appendChild(theWinner);
 }
 
+function averageSpeed(divLength, racerSpeed) {
+  let avSpeed = document.createElement("p");
+  avSpeed.textContent = `the average speed is ${divLength / racerSpeed}!`;
+  document.body.appendChild(avSpeed);
+}
+
 function moveIcon(element) {
   let img = document.querySelector(`#${element.id}`);
-
   if (img.offsetLeft >= img.parentElement.clientWidth - img.clientWidth) {
     announceWinner(element.name);
+    averageSpeed(document.querySelector(".race1").clientWidth, element.speed);
     stopAll();
-    console.log(racers);
   } else {
     img.style.left = img.offsetLeft + 10 + "px";
   }
@@ -85,10 +116,8 @@ function stopAll() {
 
 function stopSingle(event) {
   let stopRacer = event.target.className;
-  console.log(stopRacer);
-  ///racers.find((stopRacer) => );
-  console.log(event.target);
-  //clearInterval(element.intervalId);
+  console.log(racers);
+  clearInterval(stopRacer.slice(-1));
 }
 
-buildTheRace(racers);
+createRaceDivs();
